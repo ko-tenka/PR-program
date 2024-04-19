@@ -36,7 +36,11 @@ interface IInputs {
     password: string;
   }
   
+  interface ILoginPassword {
+    login: string;
+    password: string;
+  }
   export type PostsType = Array<IPost>;
   
-  export type { IInputs, IPropsForm, IList, IPost, ILoginEmailPassword, IUser }
+  export type { IInputs, IPropsForm, IList, IPost, ILoginEmailPassword, IUser, ILoginPassword }
   

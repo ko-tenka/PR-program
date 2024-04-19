@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import type { AxiosResponse } from 'axios';
-import { IInputs, PostsType, ILoginEmailPassword, IUser } from '../types/types';
+import { IInputs, PostsType, ILoginEmailPassword, IUser, ILoginPassword } from '../types/types';
 
 export const fetchPosts = createAsyncThunk('posts/all', async () => { // 'posts/all' = это не URL
   try {
@@ -33,13 +33,81 @@ async (id: number) => {
 });
 
 export const fetchUserRegister = createAsyncThunk(
-  'user/register', 
-  async(loginEmailPassoword: ILoginEmailPassword) => {
+  'user/register',
+  async (loginEmailPassword: ILoginEmailPassword) => {
+      try {
+          const response: AxiosResponse<IUser> = await axios.post(
+              'http://localhost:3000/api/users/registration',
+              loginEmailPassword,
+              { withCredentials: true }
+          );
+          return response.data;
+      } catch (error) {
+          if (axios.isAxiosError(error)) {
+              if (error.response && error.response.status === 400) {
+                return Promise.reject(new Error(error.response.data.message));
+              }
+          }
+          return Promise.reject(new Error('Произошла ошибка при регистрации'));
+
+      }
+  }
+);
+
+// export const fetchUserLogin = createAsyncThunk(
+//   'user/login', 
+//   async(loginPassoword: ILoginPassword) => {
+//     try {
+//       const response = await axios.post<AxiosResponse<IUser>>('http://localhost:3000/api/users/login', 
+//       loginPassoword, { withCredentials: true })
+//       return response.data;
+//     } catch (error) {
+//       if (axios.isAxiosError(error)){
+//         if (error.response && error.response.status === 400){
+//           return Promise.reject(new Error(error.response.data.message));
+//         }
+//         if (error.response && error.response.status === 300){
+//           return Promise.reject(new Error(error.response.data.message));
+//         }
+//       }
+//       return Promise.reject(new Error('Произошла ошибка при входе'));
+//     }
+// });
+
+export const fetchUserLogin = createAsyncThunk(
+  'user/login', 
+  async(loginPassword: ILoginPassword, { rejectWithValue }) => {
     try {
-      const response = await axios.post<AxiosResponse<IUser>>('http://localhost:3000/api/users/registration', 
-      loginEmailPassoword, { withCredentials: true })
+      const response = await axios.post<IUser>(
+        'http://localhost:3000/api/users/login',
+        loginPassword,
+        { withCredentials: true }
+      );
       return response.data;
     } catch (error) {
-      console.log(error)
+      if (axios.isAxiosError(error)) {
+        const status = error.response ? error.response.status : null;
+        const errorMessage = error.response?.data?.message || 'Произошла ошибка при входе';
+
+        // Обработка ошибок в зависимости от статуса
+        switch (status) {
+          case 400:
+            return rejectWithValue(errorMessage); // Неверный пароль
+          case 300:
+            return rejectWithValue(errorMessage); // Пользователь не существует
+          case 401:
+            return rejectWithValue('Не авторизован');
+          case 403:
+            return rejectWithValue('Доступ запрещен');
+          case 404:
+            return rejectWithValue('Ресурс не найден');
+          case 500:
+            return rejectWithValue('Ошибка сервера');
+          default:
+            return rejectWithValue('Неизвестная ошибка');
+        }
+      }
+      return rejectWithValue('Неизвестная ошибка');
     }
-});
+  }
+);

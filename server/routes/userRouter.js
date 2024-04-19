@@ -5,55 +5,105 @@ const isUser = require('../middlewares/isUser');
 
 userRouter.post('/registration', async (req, res) => {
   const { login, password, email } = req.body;
-  console.log(req.body);
   try {
-    const hash = await bcrypt.hash(password, 10);
-    const user = await User.create({ login, email, password: hash });
-    console.log(user);
+    const existingUser = await User.findOne({ where: { email } });
+    if (existingUser) {
+      return res.status(400).json({
+        error: 'Почта уже используются.',
+      });
+    } else{
+      const hash = await bcrypt.hash(password, 10);
+      const user = await User.create({ login, email, password: hash });
+      
+      const clearedUser = {
+        id: user.id,
+        login: user.login,
+        email: user.email,
+      };
+  
+      req.session.user = clearedUser;
+  
+      res.json(clearedUser);
+    }
+  } catch (error) {
+    console.log("Ошибка во время регистрации пользователя:", error);
+    res.status(400);
 
+  }
+});
+
+
+// userRouter.post('/login', async (req, res) => {
+//   console.log(req.body, 'req.body');
+//   const { login, password } = req.body;
+//   try {
+//     const user = await User.findOne({ where: { login } });
+//     if (!user) {
+//       res.status(300).json({ message: 'Пользователя не существует' });
+//     } else {
+//       const passwordCompare = await bcrypt.compare(password, user.password);
+//       if (!passwordCompare) {
+//         res.status(400).json({ message: 'Неверный пароль' });
+//       } if (passwordCompare) {
+//         const clearedUser = {
+//           id: user.id,
+//           login: user.login,
+//           email: user.email,
+//         };
+//         req.session.user = clearedUser;
+//         res.json(clearedUser);
+//       } else {
+//         res.status(400);
+//       }
+//     }
+//   } catch (error) {
+//     console.log(error);
+//     res.status(400);
+//   }
+// });
+
+userRouter.post('/login', async (req, res) => {
+  console.log(req.body, 'req.body');
+
+  // Извлекаем логин и пароль из запроса
+  const { login, password } = req.body;
+
+  // Проверяем, что логин и пароль присутствуют в запросе
+  if (!login || !password) {
+    return res.status(400).json({ message: 'Логин и пароль обязательны' });
+  }
+
+  try {
+    // Ищем пользователя по логину
+    const user = await User.findOne({ where: { login } });
+
+    // Если пользователя не найдено
+    if (!user) {
+      return res.status(300).json({ message: 'Пользователя не существует' });
+    }
+
+    // Сравниваем пароль
+    const passwordCompare = await bcrypt.compare(password, user.password);
+    if (!passwordCompare) {
+      return res.status(400).json({ message: 'Неверный пароль' });
+    }
+
+    // Если пароль совпадает
     const clearedUser = {
       id: user.id,
       login: user.login,
       email: user.email,
     };
-
     req.session.user = clearedUser;
 
-    res.json(clearedUser);
+    // Возвращаем очищенного пользователя в ответ
+    return res.status(200).json(clearedUser);
   } catch (error) {
     console.log(error);
-    res.sendStatus(400);
+    return res.status(500).json({ message: 'Произошла ошибка при входе пользователя' });
   }
 });
 
-userRouter.post('/login', async (req, res) => {
-  console.log(req.body, 'req.body');
-  const { login, password } = req.body;
-  try {
-    const user = await User.findOne({ where: { login } });
-    if (!user) {
-      res.sendStatus(400);
-    } else {
-      const passwordCompare = await bcrypt.compare(password, user.password);
-      if (!passwordCompare) {
-        res.status(400).json({ message: 'Неверный пароль' });
-      } if (passwordCompare) {
-        const clearedUser = {
-          id: user.id,
-          login: user.login,
-          email: user.email,
-        };
-        req.session.user = clearedUser;
-        res.json(clearedUser);
-      } else {
-        res.sendStatus(400);
-      }
-    }
-  } catch (error) {
-    console.log(error);
-    res.sendStatus(400);
-  }
-});
 
 userRouter.get('/logout', isUser, async (req, res) => {
   try {
