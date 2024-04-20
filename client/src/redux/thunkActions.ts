@@ -74,6 +74,34 @@ export const fetchUserRegister = createAsyncThunk(
 //     }
 // });
 
+// export const fetchUserLogin = createAsyncThunk(
+//   'user/login', 
+//   async(loginPassword: ILoginPassword, { rejectWithValue }) => {
+//     try {
+//       const response = await axios.post<IUser>(
+//         'http://localhost:3000/api/users/login',
+//         loginPassword,
+//         { withCredentials: true }
+//       );
+//       return response.data;
+//     } catch (error) {
+//       if (axios.isAxiosError(error)) {
+//         const status = error.response ? error.response.status : null;
+//         const errorMessage = error.response?.data?.message || 'Произошла ошибка при входе';
+
+//         // Обработка ошибок в зависимости от статуса
+//         switch (status) {
+//           case 400:
+//             return rejectWithValue(errorMessage); // Неверный пароль
+//           case 300:
+//             return rejectWithValue(errorMessage); // Пользователь не существует
+//         }
+//       }
+//       return rejectWithValue('Неизвестная ошибка');
+//     }
+//   }
+// );
+
 export const fetchUserLogin = createAsyncThunk(
   'user/login', 
   async(loginPassword: ILoginPassword, { rejectWithValue }) => {
@@ -83,31 +111,12 @@ export const fetchUserLogin = createAsyncThunk(
         loginPassword,
         { withCredentials: true }
       );
-      return response.data;
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const status = error.response ? error.response.status : null;
-        const errorMessage = error.response?.data?.message || 'Произошла ошибка при входе';
-
-        // Обработка ошибок в зависимости от статуса
-        switch (status) {
-          case 400:
-            return rejectWithValue(errorMessage); // Неверный пароль
-          case 300:
-            return rejectWithValue(errorMessage); // Пользователь не существует
-          case 401:
-            return rejectWithValue('Не авторизован');
-          case 403:
-            return rejectWithValue('Доступ запрещен');
-          case 404:
-            return rejectWithValue('Ресурс не найден');
-          case 500:
-            return rejectWithValue('Ошибка сервера');
-          default:
-            return rejectWithValue('Неизвестная ошибка');
-        }
+      if (response.status === 200){
+        return 'Вы вошли'
       }
-      return rejectWithValue('Неизвестная ошибка');
+    } catch (error) {
+      const errorMessage = error.response.status === 400? 'Не верный пароль' : 'Нет такого пользователя'
+       return errorMessage 
     }
   }
 );

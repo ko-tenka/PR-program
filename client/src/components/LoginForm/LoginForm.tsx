@@ -9,9 +9,8 @@ import { Alert } from 'antd';
 
 export default function LoginForm() {
   type FieldType = {
-    username?: string;
+    login?: string;
     password?: string;
-    remember?: string;
   };
   
   const [form] = Form.useForm();
@@ -19,24 +18,20 @@ export default function LoginForm() {
   const dispatch = useAppDispatch();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const onFinish = async (values: FieldType) => {
-    try {
-      const result = await dispatch(fetchUserLogin({ username: values.username, password: values.password }));
-      console.log('============>', result);
 
-      if (result.error) {
-        setErrorMessage('Не верный пароль'); // Используем `result.error` напрямую, предполагая, что это строка
-        form.resetFields();
-      } else {
-        setErrorMessage(null);
-        navigate('/');
+      const result = await dispatch(fetchUserLogin(values));
+      if(result.payload === 'Вы вошли'){
+        navigate('/')
       }
-    } catch (error) {
-      setErrorMessage('Произошла ошибка при входе.'); // В случае общей ошибки входа
-    }
+      else{
+        setErrorMessage(result.payload)
+        form.resetFields();
+      }
   };
+
   const onFinishFailed: FormProps<FieldType>['onFinishFailed'] = (errorInfo) => {
     console.log('Failed:', errorInfo);
-  };
+};
   return (
     <>
     {errorMessage && <Alert message={errorMessage || 'Ошибка'} type="error" />}
