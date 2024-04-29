@@ -17,8 +17,8 @@ router.get('/', async (req, res) => {
 
 router.post('/', async (req, res) => {
   try {
-    const { title, text, check1} = req.body
-    const post = await Task.create({ title, text, check1 });
+    const { title, description, img} = req.body
+    const post = await Task.create({ title, description, img });
     res.json(post);
   } catch (error) {
     res.json({err: error})
@@ -27,12 +27,12 @@ router.post('/', async (req, res) => {
 
 router.delete('/:id', async (req, res) => {
   try {
-    const { id } = req.body
-    await Post.destroy({ where: { id } })
+    const postId = req.params.id;
+    await Task.destroy({ where: { id: postId } });
     res.sendStatus(200);
   } catch (error) {
-    res.json({err: error})
+    res.status(500).json({ error: 'Internal Server Error' });
   }
-})
+});
 
 module.exports = router

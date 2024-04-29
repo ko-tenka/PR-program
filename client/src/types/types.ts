@@ -18,7 +18,7 @@ interface IInputs {
   interface IPost {
     id: number;
     title: string;
-    text: string;
+    description: string;
     // createdAt: Date;
     // updatedAt: Date;
   }

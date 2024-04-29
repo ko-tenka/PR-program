@@ -1,0 +1,7 @@
+.myCard {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  border-color: blue;
+  width: 150px;
+  word-wrap: break-word;
+}
