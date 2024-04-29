@@ -3,6 +3,10 @@ const bcrypt = require('bcrypt');
 const { User } = require('../db/models');
 const isUser = require('../middlewares/isUser');
 
+userRouter.get('/', (req, res) => {
+  res.json(req.session?.user || '');
+});
+
 userRouter.post('/registration', async (req, res) => {
   const { login, password, email } = req.body;
   try {

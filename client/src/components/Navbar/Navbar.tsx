@@ -1,13 +1,20 @@
-import React from 'react'
+
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-// import { useAppSelector } from "../../redux/hook";
+import { fetchUserInfo } from '../../redux/thunkActions'
+import { useAppDispatch, useAppSelector } from '../../redux/hook';
 
 export default function Navbar() {
-  // const isLogin = useAppSelector((store) => store.persistedReducer.isLogin);
-  // const login = useAppSelector((store) => store.persistedReducer.login);
-  // console.log(login)
+  const user = useAppSelector((store) => store.userSlice.user)
+  console.log(user)
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    void dispatch(fetchUserInfo());
+  }, [dispatch])
+
   return (
     <div>
+      <p>{user.login}</p>
       <Link to='/'>logo</Link>
       <div>
         <Link to='reg'>Регистрация</Link>
