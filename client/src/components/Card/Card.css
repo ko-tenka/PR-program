@@ -1,7 +1,15 @@
 .myCard {
   border-radius: 8px;
   border: 1px solid transparent;
-  border-color: blue;
+  border-color: pink;
   width: 150px;
   word-wrap: break-word;
+ justify-content: center;
+ margin-right: 30px;
+ margin-left: 30px;
+}
+
+.BtnCardDelete{
+  background-color: white;
+  color: black;
 }

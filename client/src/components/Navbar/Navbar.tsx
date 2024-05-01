@@ -1,5 +1,6 @@
 
 import React, { useEffect } from 'react';
+import './navbar.css'
 import { Link } from 'react-router-dom';
 import { fetchUserInfo } from '../../redux/thunkActions'
 import { useAppDispatch, useAppSelector } from '../../redux/hook';
@@ -13,13 +14,19 @@ export default function Navbar() {
   }, [dispatch])
 
   return (
-    <div>
-      <p>{user.login}</p>
-      <Link to='/'>logo</Link>
-      <div>
-        <Link to='reg'>Регистрация</Link>
-        <Link to='login'>Войти</Link>
-      </div>
+    <div className='navConteiner'>
+      {user.login? (
+      <>
+        <Link className='comp1' to='/'>{user.login}</Link>
+        <Link className='comp1' to='/'>logo</Link>
+        <Link className='comp1' to='/logout'>Выйти</Link>
+
+      </>):(
+      <>
+        <Link className='comp1' to='/'>logo</Link>
+        <Link className='comp1' to='/reg'>Регистрация</Link>
+        <Link className='comp1' to='/login'>Войти</Link>
+      </>)}
     </div>
   )
 }

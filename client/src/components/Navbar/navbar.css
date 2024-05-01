@@ -1,0 +1,11 @@
+.navConteiner{
+    display: flex;
+    justify-content: center;
+}
+.comp1{
+  
+   color: white;
+   margin-top: 20px;
+   margin-left: 60px;
+   margin-right: 60px;
+}

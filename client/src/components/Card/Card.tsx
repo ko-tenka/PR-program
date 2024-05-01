@@ -23,7 +23,7 @@ export default function Card({ post }: PostPropsType): JSX.Element {
       {post.title ? <h3>{post.title}</h3> : <h3>Нет тайтла</h3>}
       {post.description ? <h3>{post.description}</h3> : <h3>Нет текста</h3>}
       {/* {post.check1 ? <h3>ДА</h3> : <h3>НЕТ</h3>} */}
-      <button onClick={() => deleteHandler()}>Удалить</button>
+      <button className='BtnCardDelete'  onClick={() => deleteHandler()}>Удалить</button>
     </div>
   );
 }

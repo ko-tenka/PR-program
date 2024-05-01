@@ -6,6 +6,7 @@ import MainPage from './pages/MainPage/MainPage';
 import Navbar from './components/Navbar/Navbar';
 import RegPage from './pages/RegPage/RegPage';
 import LoginPage from './pages/LoginPage/LoginPage';
+import LogoutPage from './pages/LogoutPage/LogoutPage'
 
 
 function App(): JSX.Element {
@@ -14,8 +15,9 @@ function App(): JSX.Element {
       <Navbar/>
       <Routes>
         <Route path='/' element={<MainPage />} />
-        <Route path='login' element={<LoginPage />} />
-        <Route path='reg' element={<RegPage/>}/>
+        <Route path='/login' element={<LoginPage />} />
+        <Route path='/reg' element={<RegPage/>}/>
+        <Route path='/logout' element={<LogoutPage/>}/>
       </Routes>
 
     </>

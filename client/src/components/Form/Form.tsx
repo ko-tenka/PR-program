@@ -1,13 +1,22 @@
-import React from 'react'
 import { Input, Form, Button, Upload } from 'antd';
 import './index.css';
 import { fetchAddPost } from '../../redux/thunkActions'
-import { useAppDispatch } from '../../redux/hook';
 import { PlusOutlined } from '@ant-design/icons';
+
+import React, { useEffect } from 'react';
+import { fetchUserInfo } from '../../redux/thunkActions'
+import { useAppDispatch, useAppSelector } from '../../redux/hook';
+
 
 export default function AddForm() {
   const dispatch = useAppDispatch();
   const [form] = Form.useForm();
+
+  const user = useAppSelector((store) => store.userSlice.user)
+  useEffect(() => {
+    void dispatch(fetchUserInfo());
+  }, [dispatch])
+
 
   const onFinish = async (values) => {
     const result = await dispatch(fetchAddPost(values));
@@ -26,8 +35,9 @@ const normFile = (e: any) => {
 };
 
   return (
-    <div>
-    <Form
+    <div className='FormCont'>
+      {user?(<>
+        <Form
       form={form}
       name="basic"
       labelCol={{ span: 8 }}
@@ -39,13 +49,13 @@ const normFile = (e: any) => {
       autoComplete="off"
     >
       <Form.Item
-        label="Имя"
+        label={<span style={{ color: 'white' }}>Имя</span>}
         name="title"
         rules={[{ message: 'Введите имя!' }]}
       > <Input /> 
       </Form.Item>
       <Form.Item
-        label="О чем ваш профиль?"
+        label={<span style={{ color: 'white' }}>О чем ваш профиль?</span>}
         name="description"
         rules={[{ message: 'Введите имя!' }]}
       > <Input /> 
@@ -61,13 +71,14 @@ const normFile = (e: any) => {
         </Form.Item> */}
 
       <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-      <Button type="primary" htmlType="submit">
+      <Button type="primary" htmlType="submit" className='btnForm'> 
           Добавить
       </Button>
       </Form.Item>
     
      
-    </Form>
+    </Form></>):(<></>)}
+    
     </div>
   )
 }
