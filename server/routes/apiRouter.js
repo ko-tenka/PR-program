@@ -1,6 +1,11 @@
 const router = require('express').Router();
 const userRouter = require('./userRouter');
 const taskRouter = require('./taskRouter');
+const imgRouter = require('./imgRouter')
 
-module.exports = router.use('/users', userRouter);
-module.exports = router.use('/task', taskRouter);
+
+router.use('/users', userRouter);
+router.use('/task', taskRouter);
+router.use('/img', imgRouter);
+
+module.exports = router;

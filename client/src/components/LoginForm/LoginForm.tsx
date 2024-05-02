@@ -47,7 +47,7 @@ export default function LoginForm() {
     autoComplete="off"
   >
     <Form.Item<FieldType>
-      label="Логин"
+      label={<span style={{ color: 'white' }}>Логин</span>}
       name="login"
       rules={[{ required: true, message: 'Пожалуйста введите логин!' }]}
     >
@@ -55,7 +55,7 @@ export default function LoginForm() {
     </Form.Item>
 
     <Form.Item<FieldType>
-      label="Пароль"
+      label={<span style={{ color: 'white' }}>Пароль</span>}
       name="password"
       rules={[{ required: true, message: 'Пожалуйста введите пароль!' }]}
     >

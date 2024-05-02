@@ -3,9 +3,10 @@ import './index.css';
 import { fetchAddPost } from '../../redux/thunkActions'
 import { PlusOutlined } from '@ant-design/icons';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { fetchUserInfo } from '../../redux/thunkActions'
 import { useAppDispatch, useAppSelector } from '../../redux/hook';
+import axios from 'axios';
 
 
 export default function AddForm() {
@@ -27,6 +28,46 @@ const onFinishFailed = (errorInfo: any) => {
   console.log('Failed:', errorInfo);
 };
 
+
+
+
+const [MainFileImgFormData, uploadFileImgFormData] = useState();
+const [MainFileImg, uploadFileImg] = useState('');
+
+let file = [
+  {
+    uid:'-1',
+    name: '',
+    status: '',
+    url: '',
+  }
+]
+const handleFileChange = (info) =>{
+  if(info.file.status === 'done'){
+  uploadFileImg(()=> info.fileList[0].response.newFileNmae)
+} else if(info.file.status === 'error') {
+   console.log(`Консоль на 49 в Form ===> Файл не загружен ${info.file.name}`)
+}
+}
+const handlerFileRemove = (file) => {
+  console.log(file)
+  return axios
+  .post('http://localhost:3000/api/img/del', {
+    fileName: MainFileImg,
+  })
+  .then((response) => {
+    uploadFileImgFormData();
+    console.log('Консоль на 609 в Form ===> Файл загружен', response)
+    return true;
+  })
+  .catch((error) => {
+    uploadFileImgFormData();
+    console.log('Консоль на 609 в Form ===> Ошибка при загрузке', error)
+    return false
+  })
+}
+
+
 const normFile = (e: any) => {
   if (Array.isArray(e)) {
     return e;
@@ -39,7 +80,7 @@ const normFile = (e: any) => {
       {user?(<>
         <Form
       form={form}
-      name="basic"
+      name="img"
       labelCol={{ span: 8 }}
       wrapperCol={{ span: 16 }}
       style={{ maxWidth: 600 }}
@@ -61,14 +102,21 @@ const normFile = (e: any) => {
       > <Input /> 
       </Form.Item>
         {/* Тут большой размер не принимает ошибка 413 */}
-      {/* <Form.Item label="Upload" valuePropName="fileList" name='img' getValueFromEvent={normFile}>
-          <Upload action="/upload.do" listType="picture-card">
+      <Form.Item label="Изображение" valuePropName="fileList" name='img' getValueFromEvent={normFile}>
+          <Upload 
+          maxCount={1}
+          name='img'
+          action="http://localhost:3000/api/img/main" 
+          listType="picture"
+          onChange={handleFileChange}
+          onRemove={handlerFileRemove}
+          fileList={MainFileImgFormData}>
             <button style={{ border: 0, background: 'none' }} type="button">
               <PlusOutlined />
               <div style={{ marginTop: 8 }}>Загрузить</div>
             </button>
           </Upload>
-        </Form.Item> */}
+        </Form.Item>
 
       <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
       <Button type="primary" htmlType="submit" className='btnForm'> 
